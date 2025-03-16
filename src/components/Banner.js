@@ -2,9 +2,11 @@ import React, {useEffect, useState} from 'react';
 import requests from "../api/requests";
 import axios from "../api/axios";
 import "./Banner.css"
+import styled from "styled-components";
 
 function Banner() {
     const [movie, setMovie] = useState([])
+    const [isClicked, setIsClicked] = useState(false);
 
     const fetchData = async () => {
         const request = await axios.get(requests.fetchNowPlaying)
@@ -28,9 +30,8 @@ function Banner() {
 useEffect(() => {
         fetchData();
     }, []);
-
-
-
+console.log(movie)
+if(!isClicked){
     return (
         <header
             className="banner"
@@ -44,7 +45,7 @@ useEffect(() => {
                 <h1 className="banner__title">{movie.title || movie.name || movie.original_name}</h1>
 
                 <div className="banner__buttons">
-                    <button className="banner__button play">Play</button>
+                    <button className="banner__button play" onClick={() => setIsClicked(true)}>Play</button>
                     <button className="banner__button info">More Information</button>
                 </div>
 
@@ -53,6 +54,55 @@ useEffect(() => {
             <div className="banner--fadeBottom"/>
         </header>
     );
+}else {
+    return (
+        // src={`https://www.youtube.com/embed/${movie.videos.results[0].key}?controls=0&autoplay=1&loop=1&mute=1&playlist=${movie.videos.results[0].key}`}
+        <Container>
+            <HomeContainer>
+                <Iframe
+                    width="640"
+                    height="360"
+                    src="https://www.youtube.com/embed/U89YuK4SD9E?si=DgUaxIpC9OodFWd0"
+                    title="YouTube video player"
+                    frameborder="0"
+                    allow="autoplay; fullscreen"
+                    allowfullscreen
+                ></Iframe>
+            </HomeContainer>
+        </Container>
+    )
 }
+}
+
+const Iframe = styled.iframe`
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  opacity: 0.65;
+  border: none;
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+`;
+
+const Container = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+`;
+
+const HomeContainer = styled.div`
+  width: 100%;
+  height: 100%;
+`;
 
 export default Banner;
